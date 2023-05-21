@@ -1,96 +1,171 @@
-import { Statistic, Table } from 'antd';
-
-import React from 'react';
+import { Button, Statistic, Table, Tooltip, Typography } from 'antd';
+import React, { useState } from 'react';
+import { BranchProps } from '.';
 import branchJson from '../../pages/api/branch.json';
-const BranchPage = () => {
-  const branchData = branchJson;
-  // 운영중
+
+const BranchPage: React.FC<BranchProps> = ({ branch }) => {
+  const [showContent, setShowContent] = useState(false);
+  const branchData = branch;
+
+  //   // 운영중
   const available = branchJson.filter((item) => item.isAvailable === 1);
-  // 미운영중
+  //   // 미운영중
   const unavailable = branchJson.filter((item) => item.isAvailable === 0);
-  // 검수완료
+  //   // 검수완료
   const examined = branchJson.filter((item) => item.isExamined === 0);
-  // 검수중
+  //   // 검수중
   const examining = branchJson.filter((item) => item.isExamined === 1);
-  // 검수반려
+  //   // 검수반려
   const reject = branchJson.filter((item) => item.isExamined === 2);
 
   //table에 사용할 column
   const columns = [
     {
-      title:'순번',
-      dataIndex:'id',
-      key:'id',
-      align:'center'
+      title: '순번',
+      dataIndex: 'id',
+      key: 'id',
+      align: 'center',
     },
     {
-      title:'창고명',
-      dataIndex:'branchName',
-      key:'branchName',
-      align:'center'
+      title: '창고명',
+      dataIndex: 'branchName',
+      key: 'branchName',
+      align: 'center',
     },
     {
-      title:'운영상태',
-      dataIndex:'isAvailable',
-      key:'isAvailable',
-      align:'center',
-      render:(text:String) => text === '0' ? '미운영' : '운영중' 
+      title: '운영상태',
+      dataIndex: 'isAvailable',
+      key: 'isAvailable',
+      align: 'center',
+      render: (text: String) => (text === '0' ? '미운영' : '운영중'),
     },
     {
-      title:'검수상태',
-      dataIndex:'isExamined',
-      key:'isExamined',
-      align:'center',
-      render:(text:Number) => {
-        if (text === 0){
-            return '검수중'
-        } if (text === 1){
-             return '검수완료'
-        } else {
-            return '검수반려'
+      title: '검수상태',
+      dataIndex: 'isExamined',
+      key: 'isExamined',
+      align: 'center',
+      render: (text: Number) => {
+        if (text === 0) {
+          return '검수중';
         }
-      }
+        if (text === 1) {
+          return '검수완료';
+        } else {
+          return '검수반려';
+        }
+      },
     },
     {
-      title:'유닛',
-      dataIndex:'numberOfUnits',
-      key:'numberOfUnits',
-      align:'center',
-      render:(text:String) => text + '개'
+      title: '유닛',
+      dataIndex: 'numberOfUnits',
+      key: 'id',
+      align: 'center',
+      /* 창고페이지 4번 유닛 */
+      render: (numberOfUnits: number) =>
+        <Button onClick={() => {}}> {numberOfUnits}개</Button> ,
     },
     {
-      title:'등록일',
-      dataIndex:'createdAt',
-      key:'createdAt',
-      align:'center',
-      render:(text:String) => text.substring(0, 10), // 등록일을 받아올떄 substring으로 10글자까지만 받아오기
+      title: '등록일',
+      dataIndex: 'createdAt',
+      key: 'id',
+      align: 'center',
+      render: (text: String) => text.substring(0, 10), // 등록일을 받아올떄 substring으로 10글자까지만 받아오기
     },
     {
-      title:'수정일',
-      dataIndex:'updatedAt',
-      key:'updatedAt',
-      align:'center',
-      render:(text:String) => text.substring(0, 10),
+      title: '수정일',
+      dataIndex: 'updatedAt',
+      key: 'id',
+      align: 'center',
+      render: (text: String) => text.substring(0, 10),
     },
     {
-      title:'관리',
-      key:'management',
-      align:'center',
-      render(text:String) => {
-        // 05/18 관리탭 진행중
-      }
+      title: '관리',
+      key: 'id',
+      align: 'center',
+      render: () => {
+        /* 창고페이지 5번 창고|유닛|예약|더보기 */
+        const content = (
+          <>
+            <Button
+              type="text"
+              style={{ padding: '4px 4px' }}
+              onClick={() => handleButtonClick('창고')}
+            >
+              창고
+            </Button>
+            |
+            <Button
+              type="text"
+              style={{ padding: '4px 4px' }}
+              onClick={() => handleButtonClick('유닛')}
+            >
+              유닛
+            </Button>
+            |
+            <Button
+              type="text"
+              style={{ padding: '4px 4px' }}
+              onClick={() => handleButtonClick('예약')}
+            >
+              예약
+            </Button>
+            |
+            <Button
+              type="text"
+              style={{ padding: '4px 4px' }}
+              onClick={() => handleButtonClick('더보기')}
+            >
+              더보기
+            </Button>
+          </>
+        ); // 관리탭에 표시할 내용
+
+        const omittedContent = content.props.children.slice(0, 6); //content가 6
+        const handleToggle = () => {
+          setShowContent(!showContent);
+        }; //더보기 버튼 토글
+        const handleButtonClick = (buttonText: String) => {
+          console.log(buttonText);
+          if (buttonText === '더보기') {
+            handleToggle();
+            console.log(buttonText);
+            console.log(buttonText);
+          }
+        };
+        return (
+          <div>
+            {showContent ? (
+              content
+            ) : (
+              <>
+                <span>{omittedContent}</span>
+                {content.props.children.length > 6 && (
+                  <Button
+                    type="text"
+                    style={{ padding: '4px 4px' }}
+                    onClick={handleToggle}
+                  >
+                    ...
+                  </Button> //글자가 일정수 이상일떄 뒤를 생략하고 ... 으로 표시 ...을 누르면 전체 내용 표시
+                )}
+              </>
+            )}
+          </div>
+        );
+      },
     },
   ];
   return (
     <div>
       <h1>창고</h1>
+      {/* 창고페이지 2번 창고정보통계 */}
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-around',
           border: '1px solid black',
-          margin: '30px 30px',
+          margin: '30px',
         }}
       >
         <Statistic title="전체" value={branchData.length} />
@@ -104,11 +179,97 @@ const BranchPage = () => {
       <div
         style={{
           display: 'flex',
-          height: '350px',
-          margin: '50px 30px',
+          margin: '30px',
+          border: '1px solid black',
+          flexDirection: 'column',
         }}
       >
-        <Table columns={columns} dataSource={branchData}></Table>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            margin: '10px 10px',
+          }}
+        >
+          {/* 창고페이지 3번 창고추가 */}
+          <Button onClick={() => console.log('+창고추가')}>+창고 추가</Button>
+        </div>
+        <Table
+          style={{
+            width: '95%',
+            border: '1px solid black',
+            margin: '5px 20px 5px 5px',
+          }}
+          columns={columns}
+          dataSource={branchData}
+          bordered
+          /* 창고 페이지 6번 페이지네이션 */
+          pagination={{
+            showTotal: (total, range) =>
+              `${range[0]}-${range[1]} / 총 ${total} 건`,
+            pageSize: 10, 
+            size: 'small',
+            itemRender: (page, type, originalElement) => {
+              const handleButtonHover = (event: any) => {
+                event.target.style.backgroundColor = 'transparent';
+              };
+              const handleButtonClick = (event: any) => {
+                event.preventDefault();
+                event.target.style.backgroundColor = 'transparent';
+                event.target.style.color = 'inherit';
+              };
+              switch (type) {
+                case 'prev':
+                  return (
+                    <Button
+                      onMouseEnter={handleButtonHover}
+                      onClick={handleButtonClick}
+                      style={{ outline: 'none' }}
+                      type="text"
+                    >
+                      {'<<'}
+                    </Button>
+                  );
+                case 'next':
+                  return (
+                    <Button
+                      onMouseEnter={handleButtonHover}
+                      onClick={handleButtonClick}
+                      type="text"
+                      style={{ outline: 'none' }}
+                    >
+                      {'>>'}
+                    </Button>
+                  );
+                case 'page':
+                  return (
+                    <Button
+                      onMouseEnter={handleButtonHover}
+                      onClick={handleButtonClick}
+                      type="text"
+                      style={{ outline: 'none' }}
+                    >
+                      {page}
+                    </Button>
+                  );
+                case 'jump-next':
+                case 'jump-prev':
+                  return (
+                    <Button
+                      onMouseEnter={handleButtonHover}
+                      onClick={handleButtonClick}
+                      type="text"
+                      style={{ outline: 'none' }}
+                    >
+                      ...
+                    </Button>
+                  );
+                default:
+                  return originalElement;
+              }
+            },
+          }}
+        ></Table>
       </div>
     </div>
   );
