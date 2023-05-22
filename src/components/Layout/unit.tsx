@@ -1,21 +1,55 @@
 import { Select, Statistic, Table } from 'antd';
 
 import React, { useState } from 'react';
-import { BranchProps, UnitItemProps, UnitProps } from '.';
 import SelectBranch from './selectbranch';
 
 
-
-const UnitPage: React.FC<UnitProps & BranchProps & UnitItemProps> = ({
-  unit,
-  branch,
-  item,
-}) => {
+type UnitProps ={
+  unit: {
+    id:number,
+    branchId:number,
+    unitName:string,
+    numberOfUnitItems:number,
+    width:number,
+    depth:number,
+    height:number,
+    priceValue:number,
+    createdAt:String,
+    updatedAt:String
+  }[];
+}
+type  BranchProps ={
+  branch: {
+      id: number;
+      branchName: string;
+      isAvailable: number;
+      isExamined: number;
+      numberOfUnits: number;
+      createdAt: string;
+      updatedAt: string;
+    }[];
+}
+type UnitItemProps={
+  item: {
+    id:number,
+    unitId:number,
+    unitItemName:string,
+    startDate:string,
+    endDate:string,
+    createdAt:string,
+    updateAt:string
+  }[]
+}
+const UnitPage: React.FC<UnitProps&BranchProps&UnitItemProps> = ({ unit, branch, item }) =>{
     const [selectedBranch,setSelectedBranch] = useState('1');
-  const unitData = unit;
-  const branchData = branch;
-  const unitItem = item;
+  const unitData = unit || [];
+  const branchData = branch || [];
+  const unitItem = item || [];
 
+  // console.log('unit',unitData);
+  // console.log('branch',branchData);
+  // console.log('unit',unitData);
+  
   // Select에 표시할 defaultValue
   const defaultValue = unitData.map((unitItem) => {
     const match = branchData.find(
@@ -57,10 +91,6 @@ const UnitPage: React.FC<UnitProps & BranchProps & UnitItemProps> = ({
   // 이용종료
   const endUnit = dateFilter.filter((item)=> item.status === '이용종료');
 
-  
-
-
-
   //   statistic에 사용할 변수
   const status = {
     // 전체 유닛 갯수
@@ -73,23 +103,28 @@ const UnitPage: React.FC<UnitProps & BranchProps & UnitItemProps> = ({
     endUnit : endUnit.length,
   };
   return (
-
-        <div>
+  
+        <div style={{display:'flex', flexDirection:'column',alignItems:'center'}}>
          <h1>유닛</h1>
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-evenly',
+            justifyContent: 'space-between',
+            width:'90%',
+            marginBottom:'15px'
           }}
         >
-          지점 :{' '}
+          {/* 유닛페이지 2번 Select */}
+          <div>
+          지점 :
+          </div>
           <Select 
             onSelect={handleSelect}
             defaultValue={defaultValue && defaultValue[0].label}
             
             options={defaultValue}
-            style={{ width: '90%' }}
+            style={{ width: '95%' }}
           />
         </div>
         {selectedBranch && <SelectBranch selectBranch={selectedBranch} unit={unit} branch={branch}/> }

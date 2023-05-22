@@ -1,22 +1,34 @@
-import { Button, Statistic, Table, Tooltip, Typography } from 'antd';
+import { Button, Statistic, Table } from 'antd';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import { BranchProps } from '.';
-import branchJson from '../../pages/api/branch.json';
 
-const BranchPage: React.FC<BranchProps> = ({ branch }) => {
+type BranchPageProps = {
+  branch: {
+    id: number;
+    branchName: string;
+    isAvailable: number;
+    isExamined: number;
+    numberOfUnits: number;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+};
+const BranchPage = ({ branch }: BranchPageProps)=> {
+  
   const [showContent, setShowContent] = useState(false);
   const branchData = branch;
+  const router = useRouter();
 
-  //   // 운영중
-  const available = branchJson.filter((item) => item.isAvailable === 1);
-  //   // 미운영중
-  const unavailable = branchJson.filter((item) => item.isAvailable === 0);
-  //   // 검수완료
-  const examined = branchJson.filter((item) => item.isExamined === 0);
-  //   // 검수중
-  const examining = branchJson.filter((item) => item.isExamined === 1);
-  //   // 검수반려
-  const reject = branchJson.filter((item) => item.isExamined === 2);
+  // //   // 운영중
+  const available = branchData?.filter((item) => item.isAvailable === 1);
+  // //   // 미운영중
+  const unavailable = branchData?.filter((item) => item.isAvailable === 0);
+  // //   // 검수완료
+  const examined = branchData?.filter((item) => item.isExamined === 0);
+  // //   // 검수중
+  const examining = branchData?.filter((item) => item.isExamined === 1);
+  // //   // 검수반려
+  const reject = branchData?.filter((item) => item.isExamined === 2);
 
   //table에 사용할 column
   const columns = [
@@ -29,20 +41,20 @@ const BranchPage: React.FC<BranchProps> = ({ branch }) => {
     {
       title: '창고명',
       dataIndex: 'branchName',
-      key: 'branchName',
+      key: 'id',
       align: 'center',
     },
     {
       title: '운영상태',
       dataIndex: 'isAvailable',
-      key: 'isAvailable',
+      key: 'id',
       align: 'center',
       render: (text: String) => (text === '0' ? '미운영' : '운영중'),
     },
     {
       title: '검수상태',
       dataIndex: 'isExamined',
-      key: 'isExamined',
+      key: 'id',
       align: 'center',
       render: (text: Number) => {
         if (text === 0) {
@@ -61,8 +73,12 @@ const BranchPage: React.FC<BranchProps> = ({ branch }) => {
       key: 'id',
       align: 'center',
       /* 창고페이지 4번 유닛 */
-      render: (numberOfUnits: number) =>
-        <Button onClick={() => {}}> {numberOfUnits}개</Button> ,
+      render: (numberOfUnits: number , record : any) =>
+      <Button onClick={() => {
+        const branchId = record.key ;
+        router.push('/')
+      }}> {numberOfUnits}개</Button> ,
+
     },
     {
       title: '등록일',
@@ -168,12 +184,12 @@ const BranchPage: React.FC<BranchProps> = ({ branch }) => {
           margin: '30px',
         }}
       >
-        <Statistic title="전체" value={branchData.length} />
-        <Statistic title="검수중" value={examining.length} />
-        <Statistic title="검수완료" value={examined.length} />
-        <Statistic title="검수반려" value={reject.length} />
-        <Statistic title="미운영" value={unavailable.length} />
-        <Statistic title="운영중" value={available.length} />
+        <Statistic title="전체" value={branchData?.length} />
+        <Statistic title="검수중" value={examining?.length} />
+        <Statistic title="검수완료" value={examined?.length} />
+        <Statistic title="검수반려" value={reject?.length} />
+        <Statistic title="미운영" value={unavailable?.length} />
+        <Statistic title="운영중" value={available?.length} />
       </div>
 
       <div
@@ -198,7 +214,7 @@ const BranchPage: React.FC<BranchProps> = ({ branch }) => {
           style={{
             width: '95%',
             border: '1px solid black',
-            margin: '5px 20px 5px 5px',
+            margin: '10',
           }}
           columns={columns}
           dataSource={branchData}

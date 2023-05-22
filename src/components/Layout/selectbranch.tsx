@@ -1,11 +1,35 @@
 import { Button, Select, Statistic, Table } from 'antd';
 import { stringify } from 'querystring';
 import { start } from 'repl';
-import { BranchProps, UnitProps } from '.';
 import unitJson from '../../pages/api/unit-item.json';
 
 interface SelectProp {
   selectBranch: string;
+}
+type UnitProps ={
+  unit: {
+    id:number,
+    branchId:number,
+    unitName:string,
+    numberOfUnitItems:number,
+    width:number,
+    depth:number,
+    height:number,
+    priceValue:number,
+    createdAt:String,
+    updatedAt:String
+  }[];
+}
+type  BranchProps ={
+  branch: {
+      id: number;
+      branchName: string;
+      isAvailable: number;
+      isExamined: number;
+      numberOfUnits: number;
+      createdAt: string;
+      updatedAt: string;
+    }[];
 }
 const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
   selectBranch,
@@ -13,7 +37,6 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
   branch,
 }) => {
   const unitData = unit;
-  const branchData = branch;
   const unitItemData = unitJson;
   // statistic에 사용할 변수
   // props로 받아온 state와 같은 branchId를 가진 유닛만 필터
@@ -48,6 +71,9 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
         return { ...item, status, numberOfUnitItems, unitName, branchId };
     })
     .filter(Boolean);
+
+    
+    
   // 이용중
   const usingUnit = itemFilter.filter((item) => item?.status === '이용중');
   // 이용중 비율
@@ -159,6 +185,7 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
               수정
             </Button>
             ㅣ
+            {/* 유닛페이지 5번 수정|더보기 버튼 */}
             <Button
               type="text"
               style={{ padding: '4px 4px' }}
@@ -227,7 +254,6 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
       align: 'center',
       render: (id: number) => {
         const unit = filterUnitItem.find((item) => item?.id === id);
-
         const startDate = unit ? new Date(unit.startDate).getTime() : null;
         const endDate = unit ? new Date(unit.endDate).getTime() : null;
         const currentDate = Date.now();
@@ -235,18 +261,26 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
           console.log('startDate or endDate Error');
           return null;
         }
+        
         // 총 일수 밀리초로 변환
         const totalDate = Math.floor(
-          (endDate - startDate) / (1000 * 60 * 60 * 24),
+          (endDate - startDate) 
         );
+        
         // 경과일
         const elapseDay = Math.floor(
-          (currentDate - startDate) / (1000 * 60 * 60 * 24),
+          (currentDate - startDate) 
         );
+        
         // 소숫점을 제외한 경과율
-        const elapseRatio = ((elapseDay / totalDate) * 100).toFixed(0);
+        let elapseRatio = ((elapseDay / totalDate) * 100).toFixed(0);
+
+        // 이용이 종료됬다면 경과율을 100%로 표시
+        if(currentDate > endDate){
+          elapseRatio = '100' ;
+        }
         return `${elapseRatio}%`;
-      },
+      }
     },
     {
       title: '이용시작일',
@@ -283,6 +317,7 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
               수정
             </Button>
             ㅣ
+            {/* 유닛페이지 7번 수정|더보기 버튼 */}
             <Button
               type="text"
               style={{ padding: '4px 4px' }}
@@ -309,15 +344,15 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
   ];
 
   return (
-    <div style={{ display: 'flex', width: '100%', flexDirection: 'column' }}>
-      <div>
+    <div style={{ display: 'flex', width: '100%', flexDirection: 'column' ,alignItems:'center'}}>
+        {/* 유닛페이지 3번 해당 카테고리 정보 통계 */}
         <div
           style={{
             display: 'flex',
             width: '90%',
             justifyContent: 'space-around',
             flexDirection: 'row',
-            margin: '30px',
+            marginBottom:'15px',
             border: '1px solid black',
           }}
         >
@@ -329,30 +364,31 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
           <Statistic title="이용예정" value={status.expectUnit}></Statistic>
           <Statistic title="이용종료" value={status.endUnit}></Statistic>
         </div>
-      </div>
       <div
         style={{
           display: 'flex',
           width: '100%',
           flexDirection: 'column',
           alignItems: 'center',
+          marginBottom:'50px'
         }}
       >
-        <div style={{ border: '1px solid black', width: '90%' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            margin: '10px 10px',
-          }}
-        >
-          <Button onClick={() => console.log('+유닛추가')}>+유닛 추가</Button>
-        </div>
+        <div style={{ border: '1px solid black', width: '90%' ,marginBottom:'15px'}}>
+          {/* 유닛페이지 4번 유닛추가 버튼  */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              margin:'5px'
+            }}
+          >
+            <Button onClick={() => console.log('+유닛추가')}>+유닛 추가</Button>
+          </div>
           <Table
             style={{
               width: '95%',
               border: '1px solid black',
-              margin: '5px 20px 5px 5px',
+              margin:'10px'
             }}
             columns={unitColumns}
             dataSource={unitFilter}
@@ -360,21 +396,28 @@ const SelectBranch: React.FC<SelectProp & UnitProps & BranchProps> = ({
           ></Table>
         </div>
         <div style={{ border: '1px solid black', width: '90%' }}>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            margin: '10px 10px',
-          }}
-        >
-          {/* 창고페이지 3번 창고추가 */}
-          <Button onClick={() => console.log('+유닛아이템 추가')}>+유닛아이템 추가</Button>
-        </div>
-          <Table style={{
-            width: '95%',
-            border: '1px solid black',
-            margin: '5px 20px 5px 5px',
-          }} columns={unitItemColumns} dataSource={filterUnitItem}></Table>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              margin: '10px',
+            }}
+          >
+            {/* 유니페이지 6번 유닛아이템 추가 버튼 */}
+            <Button onClick={() => console.log('+유닛아이템 추가')}>
+              +유닛아이템 추가
+            </Button>
+          </div>
+          <Table
+            style={{
+              width: '95%',
+              border: '1px solid black',
+              margin: '10px',
+            }}
+            columns={unitItemColumns}
+            dataSource={filterUnitItem}
+            // pagination={} 페이지네이션 수정필요
+          ></Table>
         </div>
       </div>
     </div>
