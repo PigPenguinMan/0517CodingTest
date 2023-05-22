@@ -1,9 +1,10 @@
-import PageLayout from  '../../components/Layout/index'
-import UnitPage from '../../components/Layout/unit';
 import { useRouter } from 'next/router';
-
+import dynamic from 'next/dynamic';
+import { log } from 'console';
+import { useEffect, useState } from 'react';
+const UnitPage = dynamic(()=>import('../../components/Layout/unit'))
 type UnitProps ={
-  unit: {
+  unit:{
     id:number,
     branchId:number,
     unitName:string,
@@ -14,7 +15,7 @@ type UnitProps ={
     priceValue:number,
     createdAt:String,
     updatedAt:String
-  }[];
+  }[]
 }
 type  BranchProps ={
   branch: {
@@ -39,17 +40,13 @@ type UnitItemProps={
   }[]
 }
 const Unit: React.FC<UnitProps&BranchProps&UnitItemProps> = ({ unit, branch, item }) => {
+ 
+    const router = useRouter();
+  const {unitId} = router.query
 
-
-  const router = useRouter();
-  const { id } = router.query;
-  return (
-    <PageLayout>
-      <div>
-        <UnitPage unit={unit} branch={branch} item={item} />
-      </div>
-    </PageLayout>
-  );
+   return(
+    <UnitPage unit={unit} branch={branch} item={item}  />
+  )
 };
 
 export default Unit;

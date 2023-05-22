@@ -59,8 +59,7 @@ const BranchPage = ({ branch }: BranchPageProps)=> {
       render: (text: Number) => {
         if (text === 0) {
           return '검수중';
-        }
-        if (text === 1) {
+        } if (text === 1) {
           return '검수완료';
         } else {
           return '검수반려';

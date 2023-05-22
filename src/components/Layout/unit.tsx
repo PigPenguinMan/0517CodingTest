@@ -5,7 +5,7 @@ import SelectBranch from './selectbranch';
 
 
 type UnitProps ={
-  unit: {
+  unit:{
     id:number,
     branchId:number,
     unitName:string,
@@ -16,7 +16,7 @@ type UnitProps ={
     priceValue:number,
     createdAt:String,
     updatedAt:String
-  }[];
+  }[]
 }
 type  BranchProps ={
   branch: {
@@ -41,15 +41,12 @@ type UnitItemProps={
   }[]
 }
 const UnitPage: React.FC<UnitProps&BranchProps&UnitItemProps> = ({ unit, branch, item }) =>{
+  const [unitId ,setUnitId]= useState('1')
     const [selectedBranch,setSelectedBranch] = useState('1');
   const unitData = unit || [];
   const branchData = branch || [];
   const unitItem = item || [];
 
-  // console.log('unit',unitData);
-  // console.log('branch',branchData);
-  // console.log('unit',unitData);
-  
   // Select에 표시할 defaultValue
   const defaultValue = unitData.map((unitItem) => {
     const match = branchData.find(
@@ -122,7 +119,6 @@ const UnitPage: React.FC<UnitProps&BranchProps&UnitItemProps> = ({ unit, branch,
           <Select 
             onSelect={handleSelect}
             defaultValue={defaultValue && defaultValue[0].label}
-            
             options={defaultValue}
             style={{ width: '95%' }}
           />

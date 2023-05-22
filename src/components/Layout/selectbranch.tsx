@@ -1,6 +1,4 @@
 import { Button, Select, Statistic, Table } from 'antd';
-import { stringify } from 'querystring';
-import { start } from 'repl';
 import unitJson from '../../pages/api/unit-item.json';
 
 interface SelectProp {
