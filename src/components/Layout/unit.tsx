@@ -2,10 +2,11 @@ import { Select, Statistic, Table } from 'antd';
 
 import React, { useState } from 'react';
 import SelectBranch from './selectbranch';
+import { useRouter } from 'next/router';
 
 
 type UnitProps ={
-  unit:{
+  unit?:{
     id:number,
     branchId:number,
     unitName:string,
@@ -41,12 +42,13 @@ type UnitItemProps={
   }[]
 }
 const UnitPage: React.FC<UnitProps&BranchProps&UnitItemProps> = ({ unit, branch, item }) =>{
-  const [unitId ,setUnitId]= useState('1')
+  const router = useRouter();
+  const {unitId} = router.query
+  const [pageUnitId ,setPageUnitId]= useState(unitId)
     const [selectedBranch,setSelectedBranch] = useState('1');
   const unitData = unit || [];
   const branchData = branch || [];
   const unitItem = item || [];
-
   // Select에 표시할 defaultValue
   const defaultValue = unitData.map((unitItem) => {
     const match = branchData.find(

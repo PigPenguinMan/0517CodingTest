@@ -1,9 +1,9 @@
-import PageLayout from '../../components/Layout/index';
+import PageLayout from '../../components/Layout/pageLayout';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
-const BranchPage = dynamic(()=>import('components/Layout/branch'))
+const BranchPage = dynamic(()=>import('../../components/Layout/branch'))
 type BranchProps = {
-  branch: {
+  branch?: {
     id: number;
     branchName: string;
     isAvailable: number;
@@ -16,12 +16,10 @@ type BranchProps = {
 const Branch: React.FC<BranchProps> = ({ branch }) => {
   const router = useRouter();
   const { id } = router.query;
-  console.log(router);
-  
+  console.log('brnch in Id',branch);
+
   return (
-      <div>
         <BranchPage branch={branch} />
-      </div>
   );
 };
 

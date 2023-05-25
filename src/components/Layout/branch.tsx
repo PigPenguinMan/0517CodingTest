@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 type BranchPageProps = {
-  branch: {
+  branch?: {
     id: number;
     branchName: string;
     isAvailable: number;
@@ -14,11 +14,12 @@ type BranchPageProps = {
   }[];
 };
 const BranchPage = ({ branch }: BranchPageProps)=> {
+  const router = useRouter();
+  const {id} = router.query;
   
   const [showContent, setShowContent] = useState(false);
   const branchData = branch;
-  const router = useRouter();
-
+  
   // //   // 운영중
   const available = branchData?.filter((item) => item.isAvailable === 1);
   // //   // 미운영중
@@ -29,7 +30,6 @@ const BranchPage = ({ branch }: BranchPageProps)=> {
   const examining = branchData?.filter((item) => item.isExamined === 1);
   // //   // 검수반려
   const reject = branchData?.filter((item) => item.isExamined === 2);
-
   //table에 사용할 column
   const columns = [
     {
@@ -73,7 +73,9 @@ const BranchPage = ({ branch }: BranchPageProps)=> {
       align: 'center',
       /* 창고페이지 4번 유닛 */
       render: (numberOfUnits: number , record : any) =>
-      <Button onClick={() => {
+      <Button 
+      type='text'
+      onClick={() => {
         const branchId = record.key ;
         router.push('/')
       }}> {numberOfUnits}개</Button> ,
